@@ -32,7 +32,7 @@ namespace Catch {
         virtual ~CompactReporter();
 
         static std::string getDescription() {
-            return "Reports test results on a single line, suitable for IDE consumption";
+            return "Reports test results on a single line, suitable for IDEs";
         }
 
         virtual ReporterPreferences getPreferences() const {
@@ -204,13 +204,17 @@ namespace Catch {
                 }
             }
 
-            void printRemainingMessages( Colour colour = dimColour(), std::string label = "with message" ) {
+            void printRemainingMessages( Colour colour = dimColour() ) {
                 if ( itMessage == messages.end() )
                     return;
 
-                if ( ! label.empty() ) {
+                // using messages.end() directly yields compilation error:
+                std::vector<MessageInfo>::const_iterator itEnd = messages.end();
+                const int N = std::distance( itMessage, itEnd );
+
+                {
                     Colour colourGuard( colour );
-                    stream << " " << label << ":";
+                    stream << " with " << pluralise( N, "message" ) << ":";
                 }
 
                 for( std::vector<MessageInfo>::const_iterator itEnd = messages.end(); itMessage != itEnd; ) {
